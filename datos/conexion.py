@@ -1,5 +1,5 @@
 from decouple import config
-from peewee import *
+from peewee import MySQLDatabase
 
 def conectar():
     database = MySQLDatabase(config('bbdd'), **{
