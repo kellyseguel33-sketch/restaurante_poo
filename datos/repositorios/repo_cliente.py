@@ -1,6 +1,7 @@
 from datos.modelos.cliente import Cliente
 
 def listado_clientes():
-    cliente = Cliente.select()
+    cliente=Cliente.select()
     if cliente:
-        return cliente 
+            return Cliente
+
