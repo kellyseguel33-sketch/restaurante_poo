@@ -4,7 +4,7 @@ from datos.conexion import conectar
 base_datos= conectar()
 
 class BaseModel(Model):
-    class meta:
+    class Meta:
         database = base_datos
 
 class Cliente(BaseModel):
