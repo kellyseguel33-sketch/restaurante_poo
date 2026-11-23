@@ -1,13 +1,13 @@
 from prettytable import PrettyTable
 from auxiliares import mensaje_error
-from negocio import procesar_listado_reservas
+from negocio import listado_reservas
 from datos.repositorio.repositorio_reserva import obtener_reserva_por_id
 from negocio import crear_objeto_reserva, modificar_objeto_reserva
 
 def mostrar_listado_reservas():
     try:
         tabla_reservas = PrettyTable()
-        tabla_reservas = procesar_listado_reservas(tabla_reservas)
+        tabla_reservas = listado_reservas(tabla_reservas)
         print(tabla_reservas)
     except Exception as error:
         print(f'{mensaje_error}{error}')

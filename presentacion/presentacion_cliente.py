@@ -1,72 +1,56 @@
-from prettytable import PrettyTable
-from auxiliares import mensaje_error
-from negocio import procesar_listado_clientes
-from datos import obtener_cliente_nombre
-from negocio import crear_objeto_cliente, modificar_objeto_cliente
+import bcrypt
+import re
+from datos.modelos.cliente import Cliente
 
+def pedir_rut():
+    while  True:
+        rut = input('RUT (ej: 12345678-9):').strip()
+        if not rut:
+            print('el RUT no puede estar vacio.')
+            continue
+        elif Cliente.select().where(Cliente.rut == rut).exists():
+            print('este RUT ya se encuentra registrado, ingrese otro.')
+        return rut
 
-def mostrar_listado_clientes():
-    try:
-        tabla_clientes = PrettyTable()
-        tabla_clientes = procesar_listado_clientes(tabla_clientes)
-        print(tabla_clientes)
-    except Exception as error:
-        print(f'{mensaje_error}{error}')
-
-
-def crear_cliente():
-    nombre, rut, telefono, correo = '', '', '', ''
-    
+def pedir_nombre():
     while nombre == '':
-        nombre = input('Ingrese nombre: ')
-    while rut == '':
-        rut = input('Ingrese RUT: ')
-    while telefono == '':
-        telefono = input('Ingrese teléfono: ')
+        nombre = input('nombre completo: ').strip()
+        if not nombre:
+            print('el nombre no puede estar vacio.')
+
     while correo == '':
-        correo = input('Ingrese correo: ')
-        
-    crear_objeto_cliente(nombre, rut, telefono, correo)
+        correo = input('correo electronico:').strip()
+        patron_correo = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+        if not re.match(patron_correo, correo):
+            print('correo electronoco invalido, intente nuevamente.')
+            correo = ''
+        elif Cliente.select().where(Cliente.correo == correo).exists():
+            print('este correo ya esta regitrao.')
+            correo = ''
 
+    while telefono == '':
+        telefono = input('telefono (ej: +56912345678):').strip()
+        if len(telefono) < 8:
+            print('telefono muy corto o invalido.')
+            telefono = ''
 
-def modificar_cliente():
-    mostrar_listado_clientes()
-    nombre_buscar = input('Ingrese el nombre del cliente a modificar: ')
-    cliente = obtener_cliente_nombre(nombre_buscar)
-    
-    if cliente:
-        print('Cliente Encontrado:')
-        print(f'Nombre: {cliente.nombre} | RUT: {cliente.rut}')
-        
-        nombre, rut, telefono, correo = '', '', '', ''
-        
-        while nombre == '':
-            nombre = input('Ingrese nuevo nombre [o ENTER para conservar]: ')
-        while rut == '':
-            rut = input('Ingrese nuevo RUT [o ENTER para conservar]: ')
-        while telefono == '':
-            telefono = input('Ingrese nuevo teléfono [o ENTER para conservar]: ')
-        while correo == '':
-            correo = input('Ingrese nuevo correo [o ENTER para conservar]: ')
-            
-        modificar_objeto_cliente(nombre, rut, telefono, correo, cliente)
+    while contrasenia == '':
+        contrasenia = input('cree su contraseña de acceso:').strip()
+        if len(contrasenia) < 4:
+            print('la contraseña es muy corta. intente nuevamente.')
+            contrasenia = ''
 
+    hashed_password = bcrypt.hashpw(contrasenia.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
-def eliminar_cliente():
-    mostrar_listado_clientes()
-    nombre_buscar = input('Ingrese el nombre del cliente a eliminar: ')
-    cliente = obtener_cliente_nombre(nombre_buscar)
-    
-    if cliente:
-        print(f'Se eliminará el cliente: {cliente.nombre}')
-        confirmacion = input('¿Está seguro de eliminar? (s/n): ').lower()
-        
-        if confirmacion == 's':
-            try:
-                cliente.delete_instance()
-                print('¡Cliente eliminado con éxito!')
-            except Exception as error:
-                print(f'{mensaje_error}{error}')
-        else:
-            print('Operación cancelada.')
+    try:
+        nuevo_cliente = Cliente.create(
 
+            nombre = nombre.title(),
+            rut = rut,
+            correo = correo,
+            telefono = telefono,
+            password = hashed_password
+        )
+        print(f'\n cliente "{nombre.title()}" registrado exitosamente con id: {nuevo_cliente.id_cliente}!')
+    except Exception as error:
+        print(f'error al guardar el cliente: {error}')

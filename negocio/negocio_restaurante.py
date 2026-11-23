@@ -1,45 +1,36 @@
-from prettytable import PrettyTable
-from datos.repositorio.repositorio_restaurante import listado_restaurante, guardar_restaurante
-from datos.modelos.restaurante import Restaurante
-from auxiliares import mensaje_error
+from datos.repositorio.repositorio_direccion import guardar_direccion
+from datos.repositorio.repositorio_restaurante import guardar_restaurante, obtener_restaurante_nombre
+from datos.repositorio.repositorio_horarioatencion import guardar_horario
 
-
-def procesar_listado_restaurantes(tabla: PrettyTable):
-    if tabla:
-        tabla.field_names = ['Id', 'Nombre', 'Id Dirección', 'Id Horario']
-        lista_restaurantes = listado_restaurante()
-        if lista_restaurantes:
-            for res in lista_restaurantes:
-                tabla.add_row([
-                    res.id_restaurante,
-                    res.nombre,
-                    res.id_direccion,
-                    res.id_horarios_atencion
-                ])
-            return tabla
-
-
-def crear_objeto_restaurante(nombre: str, id_direccion: int, id_horarios_atencion: int):
+def inicializar_restaurante_por_defecto():
     try:
-        restaurante = Restaurante(
-            nombre=nombre,
-            id_direccion=id_direccion,
-            id_horarios_atencion=id_horarios_atencion
+        restaurante_existente = obtener_restaurante_nombre("Restaurante")
+        
+        if restaurante_existente:
+            print("El restaurante por defecto ya se encuentra registrado.")
+            return restaurante_existente
+
+        nueva_direccion = guardar_direccion(
+            calle="Avenida Alemania",
+            numero=825,
+            ciudad="Temuco",
+            comuna="Temuco",
+            detalles="local principal"
         )
-        guardar_restaurante(restaurante)
-    except Exception as error:
-        print(f'{mensaje_error}{error}')
 
+        nuevo_horario = guardar_horario(
+            dias_semana = "lunes a viernes",
+            hora_apertura = "09:00",
+            hora_cierre = "23:00"
+        )
 
-def modificar_objeto_restaurante(nombre: str, id_direccion: int, id_horarios_atencion: int, restaurante: Restaurante):
-    try:
-        if restaurante.nombre != nombre and nombre != '':
-            restaurante.nombre = nombre
-        if restaurante.id_direccion != id_direccion and id_direccion != '':
-            restaurante.id_direccion = id_direccion
-        if restaurante.id_horarios_atencion != id_horarios_atencion and id_horarios_atencion != '':
-            restaurante.id_horarios_atencion = id_horarios_atencion
+        if nueva_direccion and nuevo_horario:
+            restaurante_creado = guardar_restaurante(
+                nombre="ricacomida",
+                id_direccion=nueva_direccion.id_direccion,
+                id_horario_atencion=nuevo_horario.id_horario
+            )
+            return restaurante_creado
             
-        guardar_restaurante(restaurante)
     except Exception as error:
-        print(f'{mensaje_error}{error}')
+        print(f"Error al inicializar el restaurante: {error}")

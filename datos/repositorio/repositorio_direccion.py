@@ -20,8 +20,10 @@ def obtener_direccion_por_id(id_direccion):
 
 def guardar_direccion(calle, numero, ciudad, comuna, detalles):
     try:
-        respuesta = Direccion.save(calle=calle, numero=numero, ciudad=ciudad, comuna=comuna, detalles=detalles)
-        if respuesta:
+        direccion = Direccion.create(calle=calle, numero=numero, ciudad=ciudad, comuna=comuna, detalles=detalles)
+        if direccion:
             print(f'Dirección {calle} #{numero} guardada correctamente.')
+            return direccion
     except Exception as error:
         print(f'{mensaje_error}{error}')
+

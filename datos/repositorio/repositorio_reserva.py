@@ -17,7 +17,7 @@ def obtener_reserva_por_id(id_reserva):
     except Exception as error:
         print(f'{mensaje_error}{error}')
 
-def guardar_reserva(id_restaurante, fecha, hora, cantidad_personas, id_cliente, id_estado_reserva):
+def guardar_reserva(id_restaurante, fecha, hora, cantidad_personas, id_cliente, id_estado_reserva, id_mesa=None):
     try:
         reserva = Reserva(
             id_restaurante=id_restaurante,
@@ -25,7 +25,8 @@ def guardar_reserva(id_restaurante, fecha, hora, cantidad_personas, id_cliente, 
             hora=hora,
             cantidad_personas=cantidad_personas,
             id_cliente=id_cliente,
-            id_estado_reserva=id_estado_reserva
+            id_estado_reserva=id_estado_reserva,
+            id_mesa=id_mesa
         )
         reserva.save()
         if reserva:

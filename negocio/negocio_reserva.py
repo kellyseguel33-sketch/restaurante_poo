@@ -1,6 +1,7 @@
 from prettytable import PrettyTable
 from datos.repositorio.repositorio_reserva import listado_reservas, guardar_reserva
 from datos.modelos.reserva import Reserva
+from datos.modelos.mesa import Mesa
 from auxiliares import mensaje_error
 
 
@@ -23,39 +24,64 @@ def procesar_listado_reservas(tabla: PrettyTable):
             return tabla
 
 
+def obtener_mesas_disponibles(fecha, hora):
+    try:
+        # Corregido: Se envuelven todas las condiciones correctamente dentro del .where(...)
+        mesas_ocupadas_ids = (
+            Reserva.select(Reserva.id_mesa)
+            .where(
+                (Reserva.fecha == fecha) & 
+                (Reserva.hora == hora) & 
+                (Reserva.id_mesa.is_null(False))
+            )
+        ) 
+        ids_ocupados = [r.id_mesa for r in mesas_ocupadas_ids]
+
+        # Si hay mesas ocupadas, las filtramos; si no, trae todas las mesas
+        if ids_ocupados:
+            mesas_disponibles = Mesa.select().where(~Mesa.id_mesa.in_(ids_ocupados))
+        else:
+            mesas_disponibles = Mesa.select()
+            
+        return mesas_disponibles
+    except Exception as error:
+        print(f'Error al consultar mesas disponibles: {error}')
+        return []
+
+
 def crear_objeto_reserva(fecha, hora: str, cantidad_personas: int, id_restaurante: int, id_cliente: int, id_mesa: int, id_estado_reserva: int):
     try:
-        reserva = Reserva(
+        guardar_reserva(
+            id_restaurante=id_restaurante,
             fecha=fecha,
             hora=hora,
             cantidad_personas=cantidad_personas,
-            id_restaurante=id_restaurante,
             id_cliente=id_cliente,
-            id_mesa=id_mesa,
-            id_estado_reserva=id_estado_reserva
+            id_estado_reserva=id_estado_reserva,
+            id_mesa=id_mesa
         )
-        guardar_reserva(reserva)
     except Exception as error:
         print(f'{mensaje_error}{error}')
 
 
 def modificar_objeto_reserva(fecha, hora: str, cantidad_personas: int, id_restaurante: int, id_cliente: int, id_mesa: int, id_estado_reserva: int, reserva: Reserva):
     try:
-        if reserva.fecha != fecha and fecha != '':
+        if fecha != '':
             reserva.fecha = fecha
-        if reserva.hora != hora and hora != '':
+        if hora != '':
             reserva.hora = hora
-        if reserva.cantidad_personas != cantidad_personas and cantidad_personas != '':
+        if cantidad_personas != '':
             reserva.cantidad_personas = cantidad_personas
-        if reserva.id_restaurante != id_restaurante and id_restaurante != '':
+        if id_restaurante != '':
             reserva.id_restaurante = id_restaurante
-        if reserva.id_cliente != id_cliente and id_cliente != '':
+        if id_cliente != '':
             reserva.id_cliente = id_cliente
-        if reserva.id_mesa != id_mesa and id_mesa != '':
+        if id_mesa != '':
             reserva.id_mesa = id_mesa
-        if reserva.id_estado_reserva != id_estado_reserva and id_estado_reserva != '':
+        if id_estado_reserva != '':
             reserva.id_estado_reserva = id_estado_reserva
             
-        guardar_reserva(reserva)
+        reserva.save()
+        print('¡Reserva actualizada correctamente!')
     except Exception as error:
         print(f'{mensaje_error}{error}')

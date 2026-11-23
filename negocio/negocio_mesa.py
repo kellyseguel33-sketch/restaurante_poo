@@ -1,8 +1,23 @@
 from prettytable import PrettyTable
 from datos.repositorio.repositorio_mesa import listado_mesa, guardar_mesa
-from datos.modelos.mesa import Mesa, guardar_mesa
+from datos.modelos.mesa import Mesa
 from auxiliares import mensaje_error
 
+id_restaurante_por_defecto = 1
+
+def inicializar_mesa_ricacomida():
+    try:
+        for i in range(1, 11):
+            capacidad = 4 if i <= 6 else 6
+            guardar_mesa(
+                id_restautante = id_restaurante_por_defecto,
+                numero = i,
+                capacidad = capacidad,
+                ubicacion = "salon principal"
+            )
+        print("se han creado las 10 mesas para 'ricacomida' correctamente.")
+    except Exception as error:
+        print(f"error al inicializar las mesas:{error}")
 
 def procesar_listado_mesas(tabla: PrettyTable):
     if tabla:
@@ -44,6 +59,7 @@ def modificar_objeto_mesa(id_restaurante: int, numero: int, capacidad: int, ubic
         if mesa.ubicacion != ubicacion and ubicacion != '':
             mesa.ubicacion = ubicacion
             
-        guardar_mesa(mesa)
+        mesa.save()
+        print('¡Mesa actualizada correctamente!')
     except Exception as error:
         print(f'{mensaje_error}{error}')

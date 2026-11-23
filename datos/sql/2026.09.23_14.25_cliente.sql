@@ -3,5 +3,7 @@ create table cliente (
     nombre varchar(255) not null,
     rut varchar(20) unique not null,
     telefono varchar(20),
-    correo varchar(255)
+    correo varchar(255),
+    password varchar(60),
+    habilitado boolean default true not null
 );
