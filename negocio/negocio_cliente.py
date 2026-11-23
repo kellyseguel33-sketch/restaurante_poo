@@ -2,12 +2,12 @@ from prettytable import PrettyTable
 from datos.repositorio.repositorio_cliente import (
     listado_clientes_habilitado, 
     guardar_cliente, 
-    obtener_cliente_rut
+    obtener_cliente_rut,
+    obtener_cliente_correo
 )
 from datos.modelos.cliente import Cliente
 from auxiliares import mensaje_error
 import bcrypt
-from datos.repositorios.repositorio_cliente import obtener_cliente_correo
 
 
 def procesar_listado_clientes(tabla: PrettyTable):
