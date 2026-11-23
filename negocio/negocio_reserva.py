@@ -3,7 +3,12 @@ from datos.repositorio.repositorio_reserva import listado_reservas, guardar_rese
 from datos.modelos.reserva import Reserva
 from datos.modelos.mesa import Mesa
 from auxiliares import mensaje_error
-
+from datetime import datetime
+from datos.repositorio.repositorio_reserva import obtener_reserva_por_id
+from datos.repositorio.repositorio_restaurante import obtener_restaurante_id
+from datos.repositorio.repositorio_mesa import obtener_mesa_por_id
+from datos.repositorio.repositorio_direccion import obtener_direccion_por_id
+from auxiliares import mensaje_error
 
 def procesar_listado_reservas(tabla: PrettyTable):
     if tabla:
@@ -85,3 +90,59 @@ def modificar_objeto_reserva(fecha, hora: str, cantidad_personas: int, id_restau
         print('¡Reserva actualizada correctamente!')
     except Exception as error:
         print(f'{mensaje_error}{error}')
+
+def generar_boleta_reserva(id_reserva: int, precio_por_persona: int = 0):
+    try:
+        reserva = obtener_reserva_por_id(id_reserva)
+        if not reserva:
+            return None
+
+        restaurante = obtener_restaurante_id(reserva.id_restaurante)
+        mesa = obtener_mesa_por_id(reserva.id_mesa) if reserva.id_mesa else None
+        direccion = (
+            obtener_direccion_por_id(restaurante.id_direccion)
+            if restaurante and getattr(restaurante, 'id_direccion', None)
+            else None
+        )
+
+        total = reserva.cantidad_personas * precio_por_persona
+
+        lineas = [
+            '=' * 44,
+            '          BOLETA / COMPROBANTE DE RESERVA',
+            '=' * 44,
+            f'N° Reserva : {reserva.id_reserva}',
+            f'Emitida el : {datetime.now().strftime("%d/%m/%Y %H:%M")}',
+            '-' * 44,
+            f'Restaurante: {restaurante.nombre if restaurante else f"ID {reserva.id_restaurante}"}',
+        ]
+
+        if direccion:
+            lineas.append(f'Dirección  : {direccion.calle} #{direccion.numero}, {direccion.comuna}')
+
+        lineas.extend([
+            f'Fecha      : {reserva.fecha}',
+            f'Hora       : {reserva.hora}',
+            f'Personas   : {reserva.cantidad_personas}',
+            f'Mesa       : {f"N° {mesa.numero} ({mesa.ubicacion or \"Sin ubicación\"})" if mesa else "Por asignar"}',
+            f'Estado ID  : {reserva.id_estado_reserva}',
+            f'Cliente ID : {reserva.id_cliente}',
+        ])
+
+        if precio_por_persona > 0:
+            lineas.extend([
+                '-' * 44,
+                f'Valor por persona : ${precio_por_persona:,}'.replace(',', '.'),
+                f'Total estimado    : ${total:,}'.replace(',', '.'),
+            ])
+
+        lineas.extend([
+            '=' * 44,
+            '     ¡Gracias por preferir nuestro restaurante!',
+            '=' * 44,
+        ])
+
+        return '\n'.join(lineas)
+    except Exception as error:
+        print(f'{mensaje_error}{error}')
+        return None

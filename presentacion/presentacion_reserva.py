@@ -92,3 +92,23 @@ def eliminar_reserva():
                 print(f'{mensaje_error}{error}')
         else:
             print('Operación cancelada.')
+
+def imprimir_boleta_reserva(guardar_archivo: bool = False):
+    mostrar_listado_reservas()
+    id_r = input('Ingrese ID de la reserva para emitir boleta: ').strip()
+    if not id_r.isdecimal():
+        print('Debe ingresar un ID numérico válido.')
+        return
+
+    boleta = neg.generar_boleta_reserva(int(id_r), precio_por_persona=0)
+    if not boleta:
+        print('No se encontró la reserva indicada.')
+        return
+
+    print('\n' + boleta)
+
+    if guardar_archivo:
+        nombre_archivo = f'boleta_reserva_{id_r}.txt'
+        with open(nombre_archivo, 'w', encoding='utf-8') as archivo:
+            archivo.write(boleta)
+        print(f'\nBoleta guardada en "{nombre_archivo}".')
