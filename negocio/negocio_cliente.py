@@ -3,7 +3,7 @@ from datos.repositorio.repositorio_cliente import (
     listado_clientes_habilitado, 
     guardar_cliente, 
     obtener_cliente_rut,
-    obtener_cliente_correo
+    obtener_correo_cliente
 )
 from datos.modelos.cliente import Cliente
 from auxiliares import mensaje_error
@@ -69,7 +69,7 @@ def verificar_rut_existente(rut_str):
 
 def autenticar_cliente(correo: str, contrasenia: str):
     try:
-        cliente = obtener_cliente_correo(correo.strip().lower())
+        cliente = obtener_correo_cliente(correo.strip().lower())
         if not cliente:
             return None, 'Correo o contraseña incorrectos.'
 

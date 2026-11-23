@@ -48,3 +48,11 @@ def obtener_cliente_nombre(nombre_cliente):
             return Cliente
     except Exception as error:
         print(f'{mensaje_error}{error}')
+
+def obtener_correo_cliente(nombre_cliente):
+    try:
+        cliente = Cliente.get(Cliente.nombre == nombre_cliente)
+        if cliente:
+            return cliente.correo
+    except Exception as error:
+        print(f'{mensaje_error}{error}')
