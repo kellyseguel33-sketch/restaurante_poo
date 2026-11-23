@@ -6,6 +6,9 @@ from datos.repositorio.repositorio_cliente import (
 )
 from datos.modelos.cliente import Cliente
 from auxiliares import mensaje_error
+import bcrypt
+from datos.repositorios.repositorio_cliente import obtener_cliente_correo
+
 
 def procesar_listado_clientes(tabla: PrettyTable):
     if tabla:
@@ -63,3 +66,29 @@ def verificar_rut_existente(rut_str):
     except Exception as error:
         print(f'{mensaje_error}{error}')
         return False
+
+def autenticar_cliente(correo: str, contrasenia: str):
+    try:
+        cliente = obtener_cliente_correo(correo.strip().lower())
+        if not cliente:
+            return None, 'Correo o contraseña incorrectos.'
+
+        if not cliente.habilitado:
+            return None, 'El cliente se encuentra deshabilitado.'
+
+        if not cliente.password:
+            return None, 'El cliente no tiene contraseña registrada.'
+
+        hash_password = (
+            cliente.password.encode('utf-8')
+            if isinstance(cliente.password, str)
+            else bytes(cliente.password)
+        )
+
+        if bcrypt.checkpw(contrasenia.encode('utf-8'), hash_password):
+            return cliente, f'Bienvenido/a, {cliente.nombre} {cliente.apellido}.'
+
+        return None, 'Correo o contraseña incorrectos.'
+    except Exception as error:
+        print(f'{mensaje_error}{error}')
+        return None, 'Error al intentar iniciar sesión.'

@@ -54,3 +54,14 @@ def pedir_nombre():
         print(f'\n cliente "{nombre.title()}" registrado exitosamente con id: {nuevo_cliente.id_cliente}!')
     except Exception as error:
         print(f'error al guardar el cliente: {error}')
+
+def login_cliente():
+    print(f'\n{nombre_app} - {version_app}')
+    print(f'{"=" * (len(nombre_app) + len(version_app) + 3)}\n')
+
+    correo = solicitar_correo('Correo: ')
+    contrasenia = maskpass.askpass(prompt='Contraseña: ', mask='*')
+
+    cliente, mensaje = neg.autenticar_cliente(correo, contrasenia)
+    print(mensaje)
+    return cliente
