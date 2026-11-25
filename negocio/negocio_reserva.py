@@ -31,7 +31,6 @@ def procesar_listado_reservas(tabla: PrettyTable):
 
 def obtener_mesas_disponibles(fecha, hora):
     try:
-        # Corregido: Se envuelven todas las condiciones correctamente dentro del .where(...)
         mesas_ocupadas_ids = (
             Reserva.select(Reserva.id_mesa)
             .where(
@@ -42,7 +41,6 @@ def obtener_mesas_disponibles(fecha, hora):
         ) 
         ids_ocupados = [r.id_mesa for r in mesas_ocupadas_ids]
 
-        # Si hay mesas ocupadas, las filtramos; si no, trae todas las mesas
         if ids_ocupados:
             mesas_disponibles = Mesa.select().where(~Mesa.id_mesa.in_(ids_ocupados))
         else:
