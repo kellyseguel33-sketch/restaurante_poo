@@ -7,7 +7,7 @@ def listado_clientes_habilitado():
         if clientes:
             return clientes
     except Exception as error:
-            print(f'{mensaje_error}{error}')
+        print(f'{mensaje_error}{error}')
 
 def listado_clientes_vetado():
     try:
@@ -15,7 +15,7 @@ def listado_clientes_vetado():
         if clientes:
             return clientes
     except Exception as error:
-            print(f'{mensaje_error}{error}')
+        print(f'{mensaje_error}{error}')
 
 def listado_clientes():
     try:
@@ -23,36 +23,31 @@ def listado_clientes():
         if clientes:
             return clientes
     except Exception as error:
-            print(f'{mensaje_error}{error}')
+        print(f'{mensaje_error}{error}')
 
 def obtener_cliente_rut(rut_cliente):
     try:
-        cliente = Cliente.get(Cliente.rut == rut_cliente)
-        if cliente:
-            return cliente
+        return Cliente.get_or_none(Cliente.rut == rut_cliente)
     except Exception as error:
         print(f'{mensaje_error}{error}')
 
-def guardar_cliente(cliente:Cliente):
+def guardar_cliente(cliente: Cliente):
     try:
-        respuesta = Cliente.save()
-        if respuesta == 1:
-            print(f'Se ha guardado con éxito, ID: {cliente.id_cliente}')
+        respuesta = cliente.save()
+        if respuesta:
+            print(f'Cliente guardado con éxito, ID: {cliente.id_cliente}')
+            return cliente
     except Exception as error:
         print(f'{mensaje_error}{error}')
 
 def obtener_cliente_nombre(nombre_cliente):
     try:
-        cliente = Cliente.get(Cliente.nombre == nombre_cliente)
-        if cliente:
-            return Cliente
+        return Cliente.get_or_none(Cliente.nombre == nombre_cliente)
     except Exception as error:
         print(f'{mensaje_error}{error}')
 
-def obtener_correo_cliente(nombre_cliente):
+def obtener_correo_cliente(correo_cliente):
     try:
-        cliente = Cliente.get(Cliente.nombre == nombre_cliente)
-        if cliente:
-            return cliente.correo
+        return Cliente.get_or_none(Cliente.correo == correo_cliente)
     except Exception as error:
         print(f'{mensaje_error}{error}')

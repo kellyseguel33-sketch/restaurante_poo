@@ -1,35 +1,24 @@
-from datos.modelos.reserva import Reserva
+from datos.modelos.estadoreserva import EstadoReserva
 from auxiliares import mensaje_error
 
-def listado_reservas():
+def listado_estadoreserva():
     try:
-        reservas = Reserva.select()
-        if reservas:
-            return reservas
-    except Exception as error:
-            print(f'{mensaje_error}{error}')
-
-def obtener_reserva_por_id(id_reserva):
-    try:
-        reserva = Reserva.get(Reserva.id_reserva == id_reserva)
-        if reserva:
-            return reserva
+        estados = EstadoReserva.select()
+        if estados:
+            return estados
     except Exception as error:
         print(f'{mensaje_error}{error}')
 
-def guardar_reserva(id_restaurante, fecha, hora, cantidad_personas, id_cliente, id_estado_reserva, id_mesa=None):
+def obtener_estadoreservas_por_id(id_estadoreservas):
     try:
-        reserva = Reserva(
-            id_restaurante=id_restaurante,
-            fecha=fecha,
-            hora=hora,
-            cantidad_personas=cantidad_personas,
-            id_cliente=id_cliente,
-            id_estado_reserva=id_estado_reserva,
-            id_mesa=id_mesa
-        )
-        reserva.save()
-        if reserva:
-            print('¡Reserva guardada correctamente!')
+        return EstadoReserva.get_or_none(EstadoReserva.id_estadoreserva == id_estadoreservas)
+    except Exception as error:
+        print(f'{mensaje_error}{error}')
+
+def guardar_estadoreserva(estado_reserva: EstadoReserva):
+    try:
+        if estado_reserva.save():
+            print(f'Estado de reserva "{estado_reserva.estado}" guardado correctamente.')
+            return estado_reserva
     except Exception as error:
         print(f'{mensaje_error}{error}')
