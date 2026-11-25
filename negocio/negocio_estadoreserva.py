@@ -11,7 +11,7 @@ def procesar_listado_estadosreserva(tabla: PrettyTable):
         if lista_estados:
             for est in lista_estados:
                 tabla.add_row([
-                    est.id_estado_reserva,
+                    est.id_estadoreserva,
                     est.estado,
                     est.descripcion
                 ])

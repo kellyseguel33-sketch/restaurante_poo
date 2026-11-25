@@ -10,7 +10,7 @@ def inicializar_mesa_ricacomida():
         for i in range(1, 11):
             capacidad = 4 if i <= 6 else 6
             guardar_mesa(
-                id_restautante = id_restaurante_por_defecto,
+                id_restaurante = id_restaurante_por_defecto,
                 numero = i,
                 capacidad = capacidad,
                 ubicacion = "salon principal"
