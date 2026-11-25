@@ -122,7 +122,9 @@ def generar_boleta_reserva(id_reserva: int, precio_por_persona: int = 0):
             f'Fecha      : {reserva.fecha}',
             f'Hora       : {reserva.hora}',
             f'Personas   : {reserva.cantidad_personas}',
-            f'Mesa       : {f"N° {mesa.numero} ({mesa.ubicacion or \"Sin ubicación\"})" if mesa else "Por asignar"}',
+            f'Mesa       : {f"N° {mesa.numero} ({mesa.ubicacion or "Sin ubicación\"})" 
+                                                if mesa 
+                                                else "Por asignar"}',
             f'Estado ID  : {reserva.id_estado_reserva}',
             f'Cliente ID : {reserva.id_cliente}',
         ])
@@ -141,6 +143,6 @@ def generar_boleta_reserva(id_reserva: int, precio_por_persona: int = 0):
         ])
 
         return '\n'.join(lineas)
-    except Exception as error:
+        except Exception as error:
         print(f'{mensaje_error}{error}')
         return None
