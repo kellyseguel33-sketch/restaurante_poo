@@ -1,14 +1,13 @@
 from prettytable import PrettyTable
 from datos.repositorio.repositorio_cliente import (
-    listado_clientes_habilitado, 
-    guardar_cliente, 
+    listado_clientes_habilitado,
+    guardar_cliente,
     obtener_cliente_rut,
-    obtener_cliente_correo
+    obtener_correo_cliente
 )
 from datos.modelos.cliente import Cliente
 from auxiliares import mensaje_error
 import bcrypt
-
 
 def procesar_listado_clientes(tabla: PrettyTable):
     if tabla:
@@ -23,39 +22,43 @@ def procesar_listado_clientes(tabla: PrettyTable):
                     cliente.telefono,
                     cliente.correo
                 ])
-            return tabla
+        return tabla
 
 def crear_objeto_cliente(str_rut, str_nombre, str_correo, str_telefono, str_contrasenia):
     try:
-        cliente = Cliente(str_rut,
-                        str_nombre,
-                        str_correo, 
-                        str_telefono,
-                        password=str_contrasenia)
-        guardar_cliente(cliente)
+        hashed_password = bcrypt.hashpw(
+            str_contrasenia.encode('utf-8'), bcrypt.gensalt()
+        ).decode('utf-8')
+        cliente = Cliente(
+            rut=str_rut,
+            nombre=str_nombre.title(),
+            correo=str_correo.lower() if str_correo else None,
+            telefono=str_telefono if str_telefono else None,
+            password=hashed_password
+        )
+        return guardar_cliente(cliente)
     except Exception as error:
         print(f'{mensaje_error}{error}')
 
-def modificar_objeto_cliente(str_nombre, rut_str, telefono_str, correo_str, cliente:Cliente):
+def modificar_objeto_cliente(str_nombre, rut_str, telefono_str, correo_str, cliente: Cliente):
     try:
         if str_nombre != '':
-            cliente.nombre = str_nombre
+            cliente.nombre = str_nombre.title()
         if rut_str != '':
             cliente.rut = rut_str
         if telefono_str != '':
             cliente.telefono = telefono_str
         if correo_str != '':
-            cliente.correo = correo_str
-
-        guardar_cliente(cliente)
+            cliente.correo = correo_str.lower()
+        return guardar_cliente(cliente)
     except Exception as error:
         print(f'{mensaje_error}{error}')
 
 def procesar_obtener_cliente_rut(rut_str):
     try:
         cliente = obtener_cliente_rut(rut_str)
-        if Cliente:
-            return cliente 
+        if cliente:
+            return cliente
     except Exception as error:
         print(f'{mensaje_error}{error}')
 
@@ -69,13 +72,11 @@ def verificar_rut_existente(rut_str):
 
 def autenticar_cliente(correo: str, contrasenia: str):
     try:
-        cliente = obtener_cliente_correo(correo.strip().lower())
+        cliente = obtener_correo_cliente(correo.strip().lower())
         if not cliente:
             return None, 'Correo o contraseña incorrectos.'
-
         if not cliente.habilitado:
             return None, 'El cliente se encuentra deshabilitado.'
-
         if not cliente.password:
             return None, 'El cliente no tiene contraseña registrada.'
 
@@ -86,7 +87,7 @@ def autenticar_cliente(correo: str, contrasenia: str):
         )
 
         if bcrypt.checkpw(contrasenia.encode('utf-8'), hash_password):
-            return cliente, f'Bienvenido/a, {cliente.nombre} {cliente.apellido}.'
+            return cliente, f'Bienvenido/a, {cliente.nombre}.'
 
         return None, 'Correo o contraseña incorrectos.'
     except Exception as error:

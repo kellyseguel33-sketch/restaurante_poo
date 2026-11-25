@@ -1,12 +1,11 @@
-from peewee import SQL,  Model, AutoField, CharField, BooleanField
+from peewee import Model, AutoField, CharField, BooleanField
 from datos.conexion import conectar
-from auxiliares.datos_app import defecto
 
-base_datos= conectar()
+database = conectar()
 
 class BaseModel(Model):
     class Meta:
-        database = base_datos
+        database = database
 
 class Cliente(BaseModel):
     id_cliente = AutoField()
@@ -16,5 +15,6 @@ class Cliente(BaseModel):
     telefono = CharField(max_length=20, null=True)
     password = CharField(max_length=60, null=True)
     habilitado = BooleanField(default=True)
-class Meta:
+
+    class Meta:
         table_name = 'cliente'

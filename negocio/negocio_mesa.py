@@ -43,7 +43,7 @@ def crear_objeto_mesa(id_restaurante: int, numero: int, capacidad: int, ubicacio
             capacidad=capacidad,
             ubicacion=ubicacion
         )
-        guardar_mesa(mesa)
+        guardar_mesa(id_restaurante, numero, capacidad, ubicacion)
     except Exception as error:
         print(f'{mensaje_error}{error}')
 

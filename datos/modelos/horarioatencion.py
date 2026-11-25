@@ -13,3 +13,5 @@ class HorarioAtencion(BaseModel):
     hora_apertura = CharField(max_length=10)
     hora_cierre = CharField(max_length=10)
 
+    class Meta:
+        table_name = 'horario_atencion'

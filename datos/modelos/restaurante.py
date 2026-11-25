@@ -9,6 +9,9 @@ class BaseModel(Model):
 
 class Restaurante(BaseModel):
     id_restaurante = AutoField()
-    nombre = CharField(max_length=100)
-    id_direccion = IntegerField()        
-    id_horario_atencion = IntegerField()
+    nombre = CharField(max_length=255)
+    id_direccion = IntegerField(null=True)
+    id_horario = IntegerField(null=True)
+
+    class Meta:
+        table_name = 'restaurante'

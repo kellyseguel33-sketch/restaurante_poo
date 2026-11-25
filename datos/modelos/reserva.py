@@ -16,3 +16,5 @@ class Reserva(BaseModel):
     id_cliente = IntegerField()
     id_mesa = IntegerField(null=True)
     id_estado_reserva = IntegerField()
+
+class Meta: table_name = 'reserva'

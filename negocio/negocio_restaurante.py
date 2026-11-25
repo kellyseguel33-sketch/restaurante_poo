@@ -41,7 +41,7 @@ def inicializar_restaurante_por_defecto():
             restaurante_creado = guardar_restaurante(
                 nombre="ricacomida",
                 id_direccion=nueva_direccion.id_direccion,
-                id_horario_atencion=nuevo_horario.id_horario
+                id_horario=nuevo_horario.id_horario
             )
             return restaurante_creado
             
@@ -58,7 +58,7 @@ def procesar_listado_restaurantes(tabla: PrettyTable):
                     restaurante.id_restaurante,
                     restaurante.nombre,
                     restaurante.id_direccion,
-                    restaurante.id_horario_atencion,
+                    restaurante.id_horario,
                 ])
     return tabla
 
@@ -74,18 +74,18 @@ def listado_restaurantes_nombre(tabla: PrettyTable, nombre_restaurante: str):
                     restaurante.id_restaurante,
                     restaurante.nombre,
                     restaurante.id_direccion,
-                    restaurante.id_horario_atencion,
+                    restaurante.id_horario,
                 ])
                 id_restaurantes.append(restaurante.id_restaurante)
     return tabla, id_restaurantes
 
 
-def crear_objeto_restaurante(nombre: str, id_direccion: int, id_horario_atencion: int):
+def crear_objeto_restaurante(nombre: str, id_direccion: int, id_horario: int):
     try:
         return guardar_restaurante(
             nombre=nombre.strip(),
             id_direccion=int(id_direccion),
-            id_horario_atencion=int(id_horario_atencion),
+            id_horario=int(id_horario),
         )
     except Exception as error:
         print(f'{mensaje_error}{error}')
@@ -94,7 +94,7 @@ def crear_objeto_restaurante(nombre: str, id_direccion: int, id_horario_atencion
 def modificar_objeto_restaurante(
     nombre: str,
     id_direccion,
-    id_horario_atencion,
+    id_horario,
     restaurante: Restaurante,
 ):
     try:
@@ -102,8 +102,8 @@ def modificar_objeto_restaurante(
             restaurante.nombre = nombre
         if id_direccion != '' and restaurante.id_direccion != int(id_direccion):
             restaurante.id_direccion = int(id_direccion)
-        if id_horario_atencion != '' and restaurante.id_horario_atencion != int(id_horario_atencion):
-            restaurante.id_horario_atencion = int(id_horario_atencion)
+        if id_horario != '' and restaurante.id_horario != int(id_horario):
+            restaurante.id_horario = int(id_horario)
         return actualizar_restaurante(restaurante)
     except Exception as error:
         print(f'{mensaje_error}{error}')

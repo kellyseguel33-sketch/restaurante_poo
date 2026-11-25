@@ -14,3 +14,4 @@ class Mesa(BaseModel):
     capacidad = IntegerField()
     ubicacion = CharField(max_length=100, null=True)
 
+class Meta: table_name = 'mesa'
